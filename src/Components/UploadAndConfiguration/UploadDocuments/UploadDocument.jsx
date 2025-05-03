@@ -29,7 +29,7 @@ export default function UploadDocument() {
         const isValid = Math.random() > 0.2;
         resolve({
           isValid,
-          errors: isValid ? [] : ['Invoice/PO mismatch detected']
+          errors: isValid ? [] : ['Failed to upload file']
         });
       }, 500);
     });
