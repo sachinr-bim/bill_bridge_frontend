@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Icons
-import PaperClipIcon from '../../../assets/icons/PaperClipIcon';
+import PaperClipIcon from '../../../../assets/icons/PaperClipIcon';
 
 // Components
 import FilePreview from './FilePreview';

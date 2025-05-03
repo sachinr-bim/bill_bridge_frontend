@@ -3,7 +3,7 @@ import React from 'react'
 // Components
 import UploadProgress from './UploadProgress';
 import UploadFailed from './UploadFailed'
-import UploadPreviewAnalysis from './UploadPreviewAnalysis';
+import UploadPreviewAnalysis from '../PreviewAndAnalysis/UploadPreviewAnalysis';
 import UploadSuccess from './UploadSuccess';
 
 

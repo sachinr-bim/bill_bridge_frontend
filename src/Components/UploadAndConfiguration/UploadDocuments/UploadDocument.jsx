@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Components
-import UploadBox from './UploadBox'
+import UploadBox from './UploadBox/UploadBox'
 
 export default function UploadDocument() {
   const [selectedFiles, setSelectedFiles] = useState([]);
