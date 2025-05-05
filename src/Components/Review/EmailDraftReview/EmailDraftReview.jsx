@@ -1,8 +1,8 @@
 import React from 'react';
 
 // Redux
-import { useDispatch } from 'react-redux';
-import { newInvoice } from '../../../reduxToolkit/slices/invoiceSlice';
+// import { useDispatch } from 'react-redux';
+// import { newInvoice } from '../../../reduxToolkit/slices/invoiceSlice';
 
 // Schemas
 import { EmailSchema } from '../../../assets/utils/validationSchemas/emailSchema';
@@ -15,18 +15,18 @@ import EmailBox from './EmailBox';
 
 
 export default function EmailDraftReview() {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const fileInputRef = React.useRef(null);
 
   const formik = useFormik({
     initialValues: {
-      senderEmail: '',
-      receiverEmails: [],
-      subject: '',
+      senderEmail: 'devanshsaxena74@gmail.com',
+      receiverEmails: ['client1@example.com', 'client2@example.com'],
+      subject: 'Invoice Disrepancy',
       emailInput: '',
-      emailContent: '',
+      emailContent: `Dear Vendor, Please review the attached invoice #1234578 from Grapco builder for $3200. This invoice  is related to PO2398905 for building material. Please approve this invoice for payment by 12 June, 2025`,
       attachments: [],
-      suggestions: ['client1@example.com', 'client2@example.com', 'vendor@example.com']
+      suggestions: ['client1@example.com', 'client2@example.com', 'vendor@example.com','devanshsaxena74@gmail.com']
     },
     validationSchema: EmailSchema,
     onSubmit: (values) => {
@@ -47,7 +47,7 @@ export default function EmailDraftReview() {
       };
       
       console.log('Email data:', emailData);
-      dispatch(newInvoice(emailData));
+      alert('Request has been sent')
       
       // Reset form
       formik.resetForm();

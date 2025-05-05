@@ -1,11 +1,16 @@
 import { useState } from "react";
 
+// Redux
+import { useDispatch } from "react-redux";
+import { signupUser } from "../../reduxToolkit/slices/authSlice";
+
 // Schemas
 import { SignupSchema } from "../../assets/utils/validationSchemas/signUpSchema";
 
 // Packages and Libraries
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import Swal from "sweetalert2";
 
 // Images
 import loginImage from "../../assets/images/loginImage.png";
@@ -14,8 +19,9 @@ import loginImage from "../../assets/images/loginImage.png";
 import BillBridgeLogo from "../../assets/logos/BillBridgeLogo";
 
 export default function Signup({ handleLogin }) {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
-  const [submitted, setSubmitted] = useState(false);
+  const [signupError, setSignupError] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -27,14 +33,35 @@ export default function Signup({ handleLogin }) {
       termsAccepted: false
     },
     validationSchema: SignupSchema,
-    onSubmit: (values) => {
-      // For validation demo only
-      console.log('Valid form data:', values);
-      setSubmitted(true);
-      handleLogin()
-      
-      // When ready to implement actual signup:
-      // handleLogin(values);
+    onSubmit: async (values) => {
+      try {
+        setSignupError(null);
+        const resultAction = await dispatch(signupUser({
+          firstname: values.firstName,
+          lastname: values.lastName,
+          email: values.email,
+          password_hash: values.password
+        }));
+        
+        if (signupUser.fulfilled.match(resultAction)) {
+          // Change from sessionStorage to localStorage
+          localStorage.setItem('authToken', resultAction.payload.token);
+          
+          // Update login state and redirect to dashboard
+          handleLogin(); 
+          navigate("/dashboard");
+          
+          Swal.fire({
+            title: "Success!",
+            text: "Account created and logged in successfully!",
+            icon: "success"
+          });
+        } else {
+          setSignupError(resultAction.payload || 'Signup failed');
+        }
+      } catch {
+        setSignupError('An unexpected error occurred');
+      }
     }
   });
 
@@ -67,9 +94,9 @@ export default function Signup({ handleLogin }) {
             </p>
           </div>
 
-          {submitted && (
-            <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
-              Form validation successful! (API integration pending)
+          {signupError && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+              {signupError}
             </div>
           )}
 

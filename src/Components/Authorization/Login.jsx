@@ -1,4 +1,10 @@
 import React, {useState} from "react";
+
+// Redux
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../reduxToolkit/slices/authSlice";
+
+// Packages and Libraries
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +18,10 @@ import loginImage from "../../assets/images/loginImage.png";
 import BillBridgeLogo from "../../assets/logos/BillBridgeLogo";
 
 export default function Login({handleLogin}) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [submitted, setSubmitted] = useState(false);
+
+  const [loginError, setLoginError] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -22,21 +30,31 @@ export default function Login({handleLogin}) {
       rememberMe: false
     },
     validationSchema: LoginSchema,
-    onSubmit: (values) => {
-      // For validation demo only
-      console.log('Valid form data:', values);
-      setSubmitted(true);
-      handleLogin()
-      
-      
-      // When ready to implement Redux:
-      // const resultAction = await dispatch(loginUser(values));
-      // if (loginUser.fulfilled.match(resultAction)) {
-      //   navigate('/dashboard');
-      // }
+    onSubmit: async (values) => {
+      try {
+        setLoginError(null);
+        const resultAction = await dispatch(loginUser({
+          email: values.email,
+          password_hash: values.password
+        }));
+        
+        if (loginUser.fulfilled.match(resultAction)) {
+          // Store token if rememberMe is checked
+          if (values.rememberMe) {
+            localStorage.setItem('authToken', resultAction.payload.token);
+          } else {
+            sessionStorage.setItem('authToken', resultAction.payload.token);
+          }
+          handleLogin(); // Call your existing handleLogin function
+          // navigate('/dashboard');
+        } else {
+          setLoginError(resultAction.payload || 'Login failed');
+        }
+      } catch {
+        setLoginError('An unexpected error occurred');
+      }
     }
   });
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="flex w-full max-w-6xl overflow-hidden bg-white">
@@ -66,9 +84,9 @@ export default function Login({handleLogin}) {
             </p>
           </div>
 
-          {submitted && (
-            <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
-              Form validation successful! (API integration pending)
+          {loginError && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+              {loginError}
             </div>
           )}
 

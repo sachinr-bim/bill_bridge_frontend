@@ -85,6 +85,7 @@ export default function EmailBox({
           <div className="border-b border-gray-200 p-4">
             <input
               type="text"
+              name='subject'
               placeholder="Subject"
               className="w-full font-semibold text-gray-700 focus:outline-none"
               onChange={formik.handleChange}
