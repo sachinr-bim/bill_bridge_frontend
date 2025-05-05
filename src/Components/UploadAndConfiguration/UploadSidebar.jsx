@@ -19,6 +19,7 @@ export default function UploadSidebar() {
     { label: "Configure Reviewer Email Integration" },
     { label: "API Key / Secret Key (for Payments)" },
     { label: "Notification Email for Payment Errors" },
+    { label: "Process Schedule"}
   ];
 
   const renderItemContent = () => {

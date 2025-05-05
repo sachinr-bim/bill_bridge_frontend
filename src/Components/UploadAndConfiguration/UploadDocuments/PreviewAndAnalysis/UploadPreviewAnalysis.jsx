@@ -1,12 +1,14 @@
 import { useState } from 'react';
-
-// Icons
 import PaperClipIcon from '../../../../assets/icons/PaperClipIcon';
-
-// Components
 import FilePreview from './FilePreview';
 
-export default function UploadPreviewAnalysis({ selectedFiles, removeFile, uploadStatus, handleUpload }) {
+export default function UploadPreviewAnalysis({ 
+  selectedFiles, 
+  removeFile, 
+  uploadStatus, 
+  handleUpload,
+  resetUpload 
+}) {
   const [viewingFile, setViewingFile] = useState(null);
 
   const formatFileSize = (bytes) => {
@@ -54,7 +56,7 @@ export default function UploadPreviewAnalysis({ selectedFiles, removeFile, uploa
                   removeFile(index);
                 }}
                 className="text-red-500 hover:text-red-700 p-1"
-                disabled={uploadStatus === 'uploading'}
+                disabled={uploadStatus === 'loading'}
               >
                 ×
               </button>
@@ -63,23 +65,22 @@ export default function UploadPreviewAnalysis({ selectedFiles, removeFile, uploa
         ))}
       </ul>
       
-      {uploadStatus === 'ready' && selectedFiles.length > 0 && (
+      {uploadStatus !== 'loading' && selectedFiles.length > 0 && (
         <button 
-          onClick={handleUpload}
+          onClick={uploadStatus === 'succeeded' ? resetUpload : handleUpload}
           className="mt-4 px-6 py-3 bg-[#1B61AD] text-white text-xl rounded-lg hover:bg-white hover:text-[#1B61AD] hover:border-2 hover:border-[#1B61AD] transition duration-300"
+          disabled={uploadStatus === 'loading'}
         >
-          Upload
+          {uploadStatus === 'succeeded' ? 'Upload More Files' : 'Upload Files'}
         </button>
       )}
 
-      {uploadStatus === 'validating' && (
-        <div className="mt-4 p-3 bg-blue-50 text-blue-800 rounded-lg">
-          Uploading Files...
-        </div>
+      {viewingFile && (
+        <FilePreview 
+          viewingFile={viewingFile} 
+          handleCloseViewer={handleCloseViewer} 
+        />
       )}
-
-      {/* File Viewer Modal */}
-      {viewingFile && ( <FilePreview viewingFile={viewingFile} handleCloseViewer={handleCloseViewer} /> )}
     </>
   );
 }

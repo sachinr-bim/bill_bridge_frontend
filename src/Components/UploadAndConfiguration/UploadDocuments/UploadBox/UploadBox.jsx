@@ -1,27 +1,40 @@
-import React from 'react'
-
-// Components
+import React from 'react';
 import UploadProgress from './UploadProgress';
-import UploadFailed from './UploadFailed'
+import UploadFailed from './UploadFailed';
 import UploadPreviewAnalysis from '../PreviewAndAnalysis/UploadPreviewAnalysis';
 import UploadSuccess from './UploadSuccess';
 
-
-export default function UploadBox({isDragging,uploadProgress,handleFileChange,handleDragOver,handleDragLeave,handleDrop,handleUpload,removeFile,selectedFiles,uploadStatus,validationErrors,resetUpload}) {
+export default function UploadBox({
+  isDragging,
+  uploadProgress,
+  handleFileChange,
+  handleDragOver,
+  handleDragLeave,
+  handleDrop,
+  handleUpload,
+  removeFile,
+  selectedFiles,
+  uploadStatus,
+  validationErrors,
+  resetUpload
+}) {
   return (
-
     <>
-    {/* Error messages display */}
-    {validationErrors.length > 0 && ( <UploadFailed validationErrors={validationErrors} uploadStatus={uploadStatus} 
-    resetUpload={resetUpload} /> )}
+      {validationErrors.length > 0 && (
+        <UploadFailed 
+          validationErrors={validationErrors} 
+          uploadStatus={uploadStatus} 
+          resetUpload={resetUpload} 
+        />
+      )}
 
-    <div 
+      <div 
         className={`border-2 ${isDragging ? 'border-solid border-[#1B61AD]' : 'border-dashed border-[#1B61AD]'} bg-[#e8eff7] p-10 rounded-xl text-center`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {selectedFiles.length === 0 || uploadStatus === 'validation-failed' ? (
+        {selectedFiles.length === 0 || uploadStatus === 'failed' ? (
           <>
             <div className="text-4xl mb-4">📤</div>
             <p className="text-lg text-gray-700 mb-8">
@@ -41,17 +54,24 @@ export default function UploadBox({isDragging,uploadProgress,handleFileChange,ha
           </>
         ) : (
           <div className="text-left">
-           
-           <UploadPreviewAnalysis selectedFiles={selectedFiles} removeFile={removeFile} uploadStatus={uploadStatus} 
-           handleUpload={handleUpload} />
+            <UploadPreviewAnalysis 
+              selectedFiles={selectedFiles} 
+              removeFile={removeFile} 
+              uploadStatus={uploadStatus} 
+              handleUpload={handleUpload} 
+              resetUpload={resetUpload} 
+            />
             
-            {uploadStatus === 'uploading' && ( <UploadProgress uploadProgress={uploadProgress} /> )}
+            {uploadStatus === 'loading' && (
+              <UploadProgress uploadProgress={uploadProgress} />
+            )}
             
-            {uploadStatus === 'complete' && ( <UploadSuccess /> )}
+            {uploadStatus === 'succeeded' && (
+              <UploadSuccess resetUpload={resetUpload} />
+            )}
           </div>
         )}
       </div>
     </>
-
-  )
+  );
 }

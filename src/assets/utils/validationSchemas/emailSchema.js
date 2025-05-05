@@ -9,6 +9,7 @@ export const EmailSchema = Yup.object().shape({
     receiverEmails: Yup.array()
       .min(1, 'At least one recipient is required')
       .of(Yup.string().email('Invalid recipient email')),
+    subject: Yup.string(),  
     emailContent: Yup.string()
       .min(10, 'Email content must be at least 10 characters')
       .required('Email content is required'),
