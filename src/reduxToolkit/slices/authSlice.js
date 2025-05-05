@@ -49,10 +49,23 @@ export const signupUser = createAsyncThunk(
         email,
         password_hash
       });
-      console.log('Api Response Signup:', response.data)
-      return response.data;
+      
+      console.log('API Response Signup:', response.data);
+
+      // Store token in localStorage for persistent session
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+      }
+
+      // Return both user data and token
+      return {
+        user: response.data.user,
+        token: response.data.token,
+        message: response.data.message || 'Signup successful'
+      };
+
     } catch (error) {
-      console.log('Signup Error Message', error.response?.data?.message)
+      console.log('Signup Error Message:', error.response?.data?.message || error.message);
       return rejectWithValue(error.response?.data?.message || 'Signup failed');
     }
   }
@@ -109,10 +122,12 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signupUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
         state.isAuthenticated = true;
-      })
+        state.loading = false;
+        state.error = null;
+      })  
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;

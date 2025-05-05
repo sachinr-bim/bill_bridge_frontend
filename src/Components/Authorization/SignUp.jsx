@@ -10,6 +10,7 @@ import { SignupSchema } from "../../assets/utils/validationSchemas/signUpSchema"
 // Packages and Libraries
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import Swal from "sweetalert2";
 
 // Images
 import loginImage from "../../assets/images/loginImage.png";
@@ -43,13 +44,22 @@ export default function Signup({ handleLogin }) {
         }));
         
         if (signupUser.fulfilled.match(resultAction)) {
-          sessionStorage.setItem('authToken', resultAction.payload.token);
-          handleLogin(); // This will update your App's isLoggedIn state
-          navigate('/dashboard');
+          // Change from sessionStorage to localStorage
+          localStorage.setItem('authToken', resultAction.payload.token);
+          
+          // Update login state and redirect to dashboard
+          handleLogin(); 
+          navigate("/dashboard");
+          
+          Swal.fire({
+            title: "Success!",
+            text: "Account created and logged in successfully!",
+            icon: "success"
+          });
         } else {
           setSignupError(resultAction.payload || 'Signup failed');
         }
-      } catch{
+      } catch {
         setSignupError('An unexpected error occurred');
       }
     }
